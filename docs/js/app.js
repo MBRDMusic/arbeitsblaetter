@@ -9,6 +9,7 @@ const debug = new URLSearchParams(location.search).has("debug");
 let daten = null;
 let schliessen = null;
 let routeNr = 0;
+let angemeldet = false;
 
 async function seitenLaden() {
   if (!daten) {
@@ -44,6 +45,7 @@ function sperreZeigen() {
     fehler.textContent = "";
     try {
       if (await anmelden(form.pw.value)) {
+        angemeldet = true;
         route();
         return;
       }
@@ -126,13 +128,17 @@ async function route() {
 }
 
 async function start() {
+  // Der Listener muss auch nach einer frischen Passworteingabe aktiv sein, nicht nur mit gemerktem Schlüssel.
+  window.addEventListener("hashchange", () => {
+    if (angemeldet) route();
+  });
   try {
     if (!(await gemerktenSchluesselLaden())) return sperreZeigen();
   } catch (err) {
     app.innerHTML = `<section class="sperre"><div class="karte"><h1>Noch nicht bereit</h1><p>${err.message}</p></div></section>`;
     return;
   }
-  window.addEventListener("hashchange", route);
+  angemeldet = true;
   route();
 }
 
