@@ -1,0 +1,4 @@
+# Originalfotos und Zwischenstände niemals veröffentlichen (Verlagsinhalte, unverschlüsselt)
+vorlagen/
+build/
+.DS_Store
